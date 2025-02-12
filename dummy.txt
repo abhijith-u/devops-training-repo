@@ -1,5 +1,8 @@
 # DevOps Training
 
 
+# Adding feature-branch-a
+# Removing feature-branch-b
+
 # Removing feature-branch-a
 # Adding feature-branch-b
