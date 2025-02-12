@@ -10,7 +10,7 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: echo Hello, DevOps!
+- script: echo "Hello, DevOps!"
   displayName: 'Run a sample script'
 
 - script: |
