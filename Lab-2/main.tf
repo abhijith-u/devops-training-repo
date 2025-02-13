@@ -1,0 +1,77 @@
+#setting block
+
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "4.18.0"
+    }
+  }
+}
+
+
+#azure provider
+provider "azurerm" {
+  features {
+
+  }
+  subscription_id = "24ce47e1-99e4-44e2-90bb-0465a5c50cc8"
+}
+
+
+#resource block
+resource "azurerm_resource_group" "DevOps-training-resource-group" {
+  location = var.location
+  name     = var.resource_group_name
+
+
+}
+
+resource "azurerm_virtual_network" "vnet" {
+  name                = var.azurerm_virtual_network_name
+  location            = var.location
+  resource_group_name = azurerm_resource_group.DevOps-training-resource-group.name
+  address_space       = ["10.0.0.0/16"]
+}
+
+resource "azurerm_subnet" "subnet" {
+  name                 = "Terraform-Subnet"
+  resource_group_name  = azurerm_resource_group.DevOps-training-resource-group.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = ["10.0.1.0/24"]
+}
+resource "azurerm_network_interface" "nic" {
+  name                = "Terraform-NIC"
+  location            = azurerm_resource_group.DevOps-training-resource-group.location
+  resource_group_name = azurerm_resource_group.DevOps-training-resource-group.name
+
+  ip_configuration {
+    name                          = "internal"
+    private_ip_address_allocation = "Dynamic"
+    subnet_id                     = azurerm_subnet.subnet.id
+  }
+}
+resource "azurerm_linux_virtual_machine" "Vm" {
+  name                            = "terraformVM"
+  location                        = azurerm_resource_group.DevOps-training-resource-group.location
+  resource_group_name             = azurerm_resource_group.DevOps-training-resource-group.name
+  size                            = "Standard_B1s"
+  admin_username                  = "azureuser"
+  admin_password                  = "Abb@123456"
+  disable_password_authentication = false
+  network_interface_ids           = [azurerm_network_interface.nic.id]
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
+    version   = "latest"
+  }
+
+}
+output "vm_public_ip" {
+  value=azurerm_linux_virtual_machine.Vm.public_ip_address
+}
