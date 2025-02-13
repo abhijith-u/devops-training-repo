@@ -7,7 +7,7 @@ trigger:
 - main
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: Self-Hosted
 
 steps:
 - script: echo "Hello, DevOps!"
