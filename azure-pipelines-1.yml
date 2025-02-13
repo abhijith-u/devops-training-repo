@@ -40,18 +40,20 @@ steps:
       script: |
         az login --service-principal -u $(ARM_CLIENT_ID) -p $(ARM_CLIENT_SECRET) --tenant $(ARM_TENANT_ID)
   
- # Initialize Terraform
+# Initialize Terraform
   - task: PowerShell@2
     displayName: "Intialize Terraform"
     inputs:
       targetType: 'inline'
       script: |
+        cd Lab-2
         terraform init
 
- # Validate Terraform
+  # Validate Terraform
   - task: PowerShell@2
     displayName: "Validate Terraform"
     inputs:
       targetType: 'inline'
       script: |
+        cd Lab-2
         terraform validate
