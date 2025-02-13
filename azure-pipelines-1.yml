@@ -57,3 +57,29 @@ steps:
       script: |
         cd Lab-2
         terraform validate
+
+# Plan Terraform
+  - task: PowerShell@2
+    displayName: "Plan Terraform"
+    inputs:
+      targetType: "inline"
+      script: |
+        cd Lab-2
+        terraform.exe plan -out=tfplan `
+          -var "ARM_CLIENT_ID=$(ARM_CLIENT_ID)" `
+          -var "ARM_CLIENT_SECRET=$(ARM_CLIENT_SECRET)" `
+          -var "ARM_TENANT_ID=$(ARM_TENANT_ID)" `
+          -var "ARM_SUBSCRIPTION_ID=$(ARM_SUBSCRIPTION_ID)" 
+
+    # Apply Terraform for apply
+  - task: PowerShell@2
+    displayName: "Apply Terraform"
+    inputs:
+      targetType: "inline"
+      script: |
+        cd Lab-2
+        terraform.exe apply -auto-approve `
+          -var "ARM_CLIENT_ID=$(ARM_CLIENT_ID)" `
+          -var "ARM_CLIENT_SECRET=$(ARM_CLIENT_SECRET)" `
+          -var "ARM_TENANT_ID=$(ARM_TENANT_ID)" `
+          -var "ARM_SUBSCRIPTION_ID=$(ARM_SUBSCRIPTION_ID)"
