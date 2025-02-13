@@ -1,0 +1,32 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+
+trigger:
+  - main
+
+pool:
+  name: Self-Hosted
+
+steps:
+
+  # Check if Terraform is Installed
+  - task: PowerShell@2
+    displayName: "Check and Install Terraform"
+    condition: eq(variables['Agent.OS'], 'Windows_NT')
+    inputs:
+      targetType: 'inline'
+      script: |
+        $terraform = Get-Command terraform -ErrorAction SilentlyContinue
+        if ($terraform -eq $null) {
+          Write-Host "Terraform not found. Installing..."
+          Invoke-WebRequest -Uri "https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_windows_amd64.zip" -OutFile "terraform.zip"
+          Expand-Archive -Path "terraform.zip" -DestinationPath "C:\terraform"
+          $env:Path += ";C:\terraform"
+          Write-Host "Terraform installed successfully."
+        } else {
+          Write-Host "Terraform is already installed."
+        }
+
+  # List all files in the working directory
+  - script: dir /s /b
+    displayName: "List Files in Directory"
